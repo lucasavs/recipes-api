@@ -46,10 +46,34 @@ class RecipeDto {
         return recipes
     }
 
-    async addRecipe(recipe: Recipe): Promise<void> {
+    async addRecipe(recipe: Recipe): Promise<Recipe> {
 
-        console.log (recipe)
-        await pool.query("INSERT INTO recipes (title, making_time, serves, ingredients, cost) VALUES (?, ?, ?, ?, ?)", [recipe.title, recipe.makingTime, recipe.serves, recipe.ingredients, recipe.cost])
+        await pool.query("START TRANSACTION")
+
+        let newRecipe: Recipe
+
+        try {
+            await pool.query("INSERT INTO recipes (title, making_time, serves, ingredients, cost) VALUES (?, ?, ?, ?, ?)", [recipe.title, recipe.makingTime, recipe.serves, recipe.ingredients, recipe.cost])
+
+            const [rows, fields] = await pool.query('SELECT * FROM recipes WHERE id = LAST_INSERT_ID()');
+            newRecipe = {
+                id: rows[0].id,
+                title: rows[0].title,
+                makingTime: rows[0].making_time,
+                serves: rows[0].serves,
+                ingredients: rows[0].ingredients,
+                cost: rows[0].cost,
+                createdAt: rows[0].created_at,
+                UpdatedAt: rows[0].updated_at
+            }
+
+            await pool.query("COMMIT")
+        } catch(error) {
+            await pool.query("ROLLBACK")
+            throw error
+        }
+
+        return newRecipe
     }
 
     async updateRecipe(recipe: Recipe): Promise<Recipe> {
