@@ -1,5 +1,9 @@
 import express, { Request, Response } from "express";
 import recipeRoutes from './routes/recipesRoutes'
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -9,8 +13,10 @@ const port = process.env.PORT || 3000;
 //     res.json({ message: "Welcome to the Express + TypeScript Server!" });
 // });
 
+app.use(express.json())
+
 // app.use('/api/v1/recipes') // note: we want to use a versioned version due to APIs contracts
-app.use('recipes', recipeRoutes)
+app.use('/recipes/', recipeRoutes)
 
 // Start the Express server
 app.listen(port, () => {

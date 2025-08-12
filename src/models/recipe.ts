@@ -1,12 +1,12 @@
 type Recipe = {
-    id: number,
+    id?: number,
     title: string,
     makingTime: string,
     serves: string,
     ingredients: string,
     cost: number,
-    createdAt: Date,
-    UploadedAt: Date
+    createdAt?: Date,
+    UpdatedAt?: Date
 }
 
 export default Recipe
