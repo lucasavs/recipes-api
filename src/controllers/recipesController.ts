@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import RecipeService from '../services/recipesService';
 import Recipe from '../models/recipe';
 import RecipeMandatoryFieldsNotPresent from '../errors/recipeMandatoryFieldsNotPresent';
 
 class RecipesController {
 
-    async getRecipeById(req: Request, res: Response): Promise<void> {
+    async getRecipeById(req: Request, res: Response, next: NextFunction): Promise<void> {
         const recipeId = Number(req?.params?.id);
         const recipeService = new RecipeService()
         try {
@@ -24,11 +24,11 @@ class RecipesController {
             }
             res.status(200).json(response)
         } catch (error) {
-            throw error
+            next(error)
         }
     }
 
-    async getAllRecipe(req: Request, res: Response): Promise<void> {
+    async getAllRecipe(req: Request, res: Response, next: NextFunction): Promise<void> {
         const recipeService = new RecipeService()
         try {
             const recipes = await recipeService.getAllRecipe()
@@ -45,11 +45,11 @@ class RecipesController {
             }
             res.status(200).json(response)
         } catch (error) {
-            throw error
+            next(error)
         }
     }
 
-    async addRecipe(req: Request, res: Response): Promise<void> {
+    async addRecipe(req: Request, res: Response, next: NextFunction): Promise<void> {
         const recipeService = new RecipeService()
         try {
             const request = req.body
@@ -97,12 +97,13 @@ class RecipesController {
                     message:"Recipe creation failed!",
                     required: error.mandatoryFields.map((mandatoryField) => mandatoryFieldTranslator[mandatoryField])
                 })
+            } else {
+                next(error)
             }
-            throw error
         }
     }
 
-    async updateRecipe(req: Request, res: Response): Promise<void> {
+    async updateRecipe(req: Request, res: Response, next: NextFunction): Promise<void> {
         const recipeService = new RecipeService()
         try {
             const request = req.body
@@ -136,11 +137,11 @@ class RecipesController {
 
             res.status(200).json(response)
         } catch (error) {
-            throw error
+            next(error)
         }
     }
 
-    async deleteRecipe(req: Request, res: Response): Promise<void> {
+    async deleteRecipe(req: Request, res: Response, next: NextFunction): Promise<void> {
         const recipeService = new RecipeService()
         try {
             const recipeId = Number(req?.params?.id);
@@ -148,7 +149,7 @@ class RecipesController {
 
             res.status(200)
         } catch (error) {
-            throw error
+            next(error)
         }
     }
 

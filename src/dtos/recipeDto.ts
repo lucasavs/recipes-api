@@ -5,8 +5,8 @@ import RecipeNotFoundError from "../errors/recipeNotFoudError";
 
 class RecipeDto {
     async getRecipeById(recipeId: number): Promise<Recipe> {
-        const [rows, fields] = await pool.query('SELECT * FROM recipes WHERE id = ?', [recipeId]);
-        if (!rows) {
+        const [rows, fields] = await pool.query<RowDataPacket[]>('SELECT * FROM recipes WHERE id = ?', [recipeId]);
+        if (rows.length === 0) {
             throw new RecipeNotFoundError(`Cannot find recipeId ${recipeId}`)
         }
 
