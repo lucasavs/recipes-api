@@ -5,8 +5,6 @@ import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware";
 
 dotenv.config();
 
-console.log("wololose")
-
 const app = express();
 
 app.use(express.json())
