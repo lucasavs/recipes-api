@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import recipeRoutes from './routes/recipesRoutes'
 import dotenv from 'dotenv';
 import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware";
@@ -19,5 +19,5 @@ app.use(errorHandlerMiddleware)
 
 // Start the Express server
 app.listen(port, () => {
-    console.log(`The server is running at http://localhost:${port}`);
+  console.log(`The server is running at http://localhost:${port}`);
 });
