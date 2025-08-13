@@ -91,8 +91,6 @@ class RecipesController {
           cost: "cost"
         }
 
-        console.log(`mandatory fields ${error.mandatoryFields}`)
-
         res.status(400).json({
           message:"Recipe creation failed!",
           required: error.mandatoryFields.map((mandatoryField) => mandatoryFieldTranslator[mandatoryField])
@@ -147,7 +145,7 @@ class RecipesController {
       const recipeId = Number(req?.params?.id);
       await recipeService.deleteRecipe(recipeId)
 
-      res.status(200)
+      res.status(200).json({message: "Recipe succesfully removed!"})
     } catch (error) {
       next(error)
     }
