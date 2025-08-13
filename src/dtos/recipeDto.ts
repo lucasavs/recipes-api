@@ -1,6 +1,6 @@
 import Recipe from "../models/recipe";
 import pool from "../db/mysql";
-import { RowDataPacket } from "mysql2/promise";
+import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import RecipeNotFoundError from "../errors/recipeNotFoudError";
 
 class RecipeDto {
@@ -48,6 +48,8 @@ class RecipeDto {
 
   async addRecipe(recipe: Recipe): Promise<Recipe> {
 
+    // using tramsaction her because we need to retrieve the id of the last added recipe
+    // not 100% sure if this is needed, sice the LAST_INSERT_ID, in theory, would retrieve this from the connection
     await pool.query("START TRANSACTION")
 
     let newRecipe: Recipe
@@ -77,7 +79,7 @@ class RecipeDto {
   }
 
   async updateRecipe(recipe: Recipe): Promise<Recipe> {
-        
+    
     await pool.query("START TRANSACTION")
     let newVersionRecipe:Recipe
 
@@ -121,19 +123,10 @@ class RecipeDto {
   }
 
   async deleteRecipe(recipeId: number): Promise<void> {
-    await pool.query("START TRANSACTION")
+    const [rows] = await pool.query<ResultSetHeader>("DELETE FROM recipes WHERE id = ?", [recipeId])
 
-    try {
-      const [rows] = await pool.query<RowDataPacket[]>('SELECT * FROM recipes WHERE id= ?', [recipeId]);
-      if (rows.length === 0) {
-        throw new RecipeNotFoundError(`Message not found during delete for recipeId ${recipeId}`)
-      }
-      await pool.query("DELETE FROM recipes WHERE id = ?", [recipeId])
-
-      await pool.query("COMMIT")
-    } catch(error) {
-      await pool.query("ROLLBACK")
-      throw error
+    if (rows.affectedRows === 0) {
+      throw new RecipeNotFoundError(`Message not found during delete for recipeId ${recipeId}`)
     }
   }
 
