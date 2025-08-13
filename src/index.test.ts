@@ -157,7 +157,7 @@ describe('POST /recipes/', () => {
       cost: 30,
     })
 
-    expect(response.status).toBe(400)
+    expect(response.status).toBe(200)
     expect(response.body).toEqual({
       message: 'Recipe creation failed!',
       required: ['title', 'serves']

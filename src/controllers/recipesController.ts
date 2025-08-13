@@ -91,7 +91,8 @@ class RecipesController {
           cost: "cost"
         }
 
-        res.status(400).json({
+        // this error code is to be compatible with the required requisite, but errors from the user should be marked as 400
+        res.status(200).json({
           message:"Recipe creation failed!",
           required: error.mandatoryFields.map((mandatoryField) => mandatoryFieldTranslator[mandatoryField])
         })
